@@ -26,5 +26,7 @@ class Miner:
                     self.launch_time[proc].append(int(line.split(",")[-3]))
 
         for proc in self.launch_time.keys():
-            self.average_launch_time[proc] = float(sum(self.launch_time[proc][1:]) / len(self.launch_time[proc]) - 1)
+            self.average_launch_time[proc] = round(float(
+                sum(self.launch_time[proc][1:]) / len(self.launch_time[proc]) - 1), 2)
+            print(f"{proc} / {self.average_launch_time[proc]}")
         # print(self.launch_time["com.soundcloud.android"])
