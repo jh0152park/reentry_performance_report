@@ -22,7 +22,7 @@ class Miner:
             return 0
         return sum(self.categories[category]) / len(self.categories[category])
 
-    def get_proc_meminfo_info(self):
+    def get_proc_meminfo_info(self) -> dict:
         return self.categories
 
     def read_test_scenario(self):
@@ -31,5 +31,5 @@ class Miner:
             if "run this app" in line:
                 self.scenario.append(line.split(":")[-1].strip())
 
-    def get_test_scenario(self):
+    def get_test_scenario(self) -> list:
         return self.scenario

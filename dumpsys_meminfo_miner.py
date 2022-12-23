@@ -9,6 +9,8 @@ class Miner:
         self.launch_count = {}
         self.re_entry_count = {}
         self.re_entry_performance = {}
+        self.adj = []
+        self.pss_by_adj = {}
 
     def set_log(self, log):
         self.log = log
@@ -48,6 +50,53 @@ class Miner:
             print("can not compute re entry performance due to re entry count is empty")
             exit(0)
         for proc in self.re_entry_count.keys():
-            self.re_entry_performance[proc] = round(float(
-                sum(self.re_entry_count[proc]) / len(self.re_entry_count[proc])), 2)
-            print(f"{proc} / {self.re_entry_performance[proc]}")
+            self.re_entry_performance[proc] = 1.00 * sum(self.re_entry_count[proc]) / len(self.re_entry_count[proc])
+            # print(f"{proc} / {self.re_entry_performance[proc]}")
+
+    def compute_all_adj(self):
+        for log in self.log:
+            line = log[:-1]
+            if "K: " in line and "(pid" not in line:
+                adj = line.split("K: ")[-1]
+                if adj not in self.adj:
+                    self.adj.append(adj)
+                    self.pss_by_adj[adj] = []
+
+    def fill_in_pss_by_scenario(self):
+        for adj in self.pss_by_adj.keys():
+            self.pss_by_adj[adj].append(0)
+
+    def compute_pss_size_by_adj(self):
+        is_pss = False
+        self.compute_all_adj()
+
+        for log in self.log:
+            line = log[:-1]
+
+            if "Total PSS by OOM adjustment:" in line:
+                is_pss = True
+                self.fill_in_pss_by_scenario()
+            elif "Total PSS by category:" in line:
+                is_pss = False
+
+            if is_pss:
+                if "K: " in line and "(pid" not in line:
+                    pss = int(line.split("K:")[0].strip().replace(",", ""))
+                    adj = line.split("K: ")[-1]
+                    self.pss_by_adj[adj][-1] = pss
+
+    def get_average_by_pss(self, adj: str):
+        if adj not in self.pss_by_adj.keys():
+            return 0.0
+        return 1.00 * sum(self.pss_by_adj[adj]) / (len(self.pss_by_adj[adj]) - self.pss_by_adj[adj].count(0))
+
+    def get_adj_list(self) -> list:
+        return self.adj
+
+    def get_pss_by_adj(self) -> dict:
+        return self.pss_by_adj
+
+    def get_re_entry_performance(self) -> dict:
+        if not self.re_entry_performance:
+            self.compute_re_entry_count()
+        return self.re_entry_performance

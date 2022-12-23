@@ -1,5 +1,6 @@
 import os
 import model
+import report_generator as rp
 
 models = []
 log_files = [file for file in os.listdir(os.getcwd()) if file.endswith(".txt")]
@@ -22,9 +23,14 @@ for file in log_files:
             elif "dumpsys_meminfo" in file:
                 model.set_dumpsys_meminfo_log(read)
 
+for model in models:
+    model.compute_proc_meminfo_log()
+    model.compute_test_scenario()
+    model.compute_launch_time()
+    model.compute_re_entry_count()
+    model.compute_re_entry_performance()
+    model.compute_pss_size_by_adj()
 
-models[0].compute_proc_meminfo_log()
-models[0].compute_test_scenario()
-models[0].compute_launch_speed()
-models[0].compute_re_entry_count()
-models[0].compute_re_entry_performance()
+report = rp.Report("reentry_performance_report.xlsx", models)
+report.write_summary_sheet()
+report.close_report()

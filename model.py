@@ -61,7 +61,7 @@ class Model:
         self.event_log_miner.set_test_scenario_package(self.test_scenario_package)
         self.dumpsys_meminfo_minder.set_test_scenario_package(self.test_scenario_package)
 
-    def compute_launch_speed(self):
+    def compute_launch_time(self):
         self.event_log_miner.compute_launch_time()
 
     def compute_re_entry_count(self):
@@ -69,3 +69,17 @@ class Model:
 
     def compute_re_entry_performance(self):
         self.dumpsys_meminfo_minder.compute_re_entry_performance()
+
+    def compute_pss_size_by_adj(self):
+        self.dumpsys_meminfo_minder.compute_pss_size_by_adj()
+        # print(self.dumpsys_meminfo_minder.get_average_pss("Native"))
+        # print(self.dumpsys_meminfo_minder.get_average_pss("Cached"))
+
+    def get_test_scenario(self) -> list:
+        return self.test_scenario
+
+    def get_re_entry_performance(self) -> dict:
+        return self.dumpsys_meminfo_minder.get_re_entry_performance()
+
+    def get_average_launch_time(self) -> dict:
+        return self.event_log_miner.get_average_launch_time()

@@ -26,7 +26,21 @@ class Miner:
                     self.launch_time[proc].append(int(line.split(",")[-3]))
 
         for proc in self.launch_time.keys():
-            self.average_launch_time[proc] = round(float(
-                sum(self.launch_time[proc][1:]) / len(self.launch_time[proc]) - 1), 2)
-            print(f"{proc} / {self.average_launch_time[proc]}")
+            try:
+                self.average_launch_time[proc] = \
+                    1.00 * sum(self.launch_time[proc][1:]) / (len(self.launch_time[proc]) - 1)
+            except BaseException as ex:
+                print("occurred compute error to get average launch time.")
+                print(f"error is {ex}")
+                print("please check detail below")
+                print(f"{proc} / {self.launch_time[proc]}")
+                self.average_launch_time[proc] = \
+                    1.00 * sum(self.launch_time[proc]) / (len(self.launch_time[proc]))
+
+            # print(f"{proc} / {self.average_launch_time[proc]}")
         # print(self.launch_time["com.soundcloud.android"])
+
+    def get_average_launch_time(self) -> dict:
+        if not self.average_launch_time:
+            self.compute_launch_time()
+        return self.average_launch_time
