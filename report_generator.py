@@ -89,8 +89,8 @@ class Report:
             self.set_column(self.summary_sheet, 4 + (i * 2), 4 + (i * 2), 15)
 
             self.set_merge(self.summary_sheet, 3 + (i * 2), 1, 4 + (i * 2), 1, self.models[i].id)
-            self.write_string(self.summary_sheet, 3+(i * 2), 2, "Re-Entry(개)", None)
-            self.write_string(self.summary_sheet, 4+(i * 2), 2, "AVG Speed(ms)", None)
+            self.write_string(self.summary_sheet, 3 + (i * 2), 2, "Re-Entry(개)", None)
+            self.write_string(self.summary_sheet, 4 + (i * 2), 2, "AVG Speed(ms)", None)
 
     def write_test_scenario(self):
         if not self.test_scenario:
@@ -134,6 +134,7 @@ class Report:
             self.set_test_scenario()
 
         y = 5 + len(self.test_scenario)
+        self.write_string(self.summary_sheet, 1, y - 1, "AVG Memory Info", None)
         for category in self.memory_agenda:
             self.write_string(self.summary_sheet, 1, y, category, None)
             y += 1
@@ -152,10 +153,10 @@ class Report:
                 if average_mem is None:
                     if category == "Available Memory":
                         average_mem = model.get_average_by_category(self.memory_agenda_key["Free Memory"]) + \
-                                        model.get_average_by_category(self.memory_agenda_key["Cached Memory"])
+                                      model.get_average_by_category(self.memory_agenda_key["Cached Memory"])
                     elif category == "Swap Used":
                         average_mem = model.get_average_by_category(self.memory_agenda_key["Swap Total"]) - \
-                                        model.get_average_by_category(self.memory_agenda_key["Swap Free"])
+                                      model.get_average_by_category(self.memory_agenda_key["Swap Free"])
                 self.write_number(self.summary_sheet, x, y, average_mem, None)
             x += 1
 
@@ -170,6 +171,7 @@ class Report:
             self.set_test_scenario()
 
         y = 7 + len(self.test_scenario) + len(self.memory_agenda)
+        self.write_string(self.summary_sheet, 1, y - 1, "AVG PSS Info", None)
         for adj in self.adj:
             self.write_string(self.summary_sheet, 1, y, adj, None)
             y += 1
@@ -228,18 +230,91 @@ class Report:
                 x += 1
 
     def write_test_sequence(self):
+        if not self.proc_meminfo_sheet:
+            self.create_proc_meminfo_sheet()
+
         for i in range(len(self.models)):
             model = self.models[i]
             sheet = self.proc_meminfo_sheet[i]
-        # for sheet in self.proc_meminfo_sheet:
             self.set_column(sheet, 1, 1, 25)
             y = 2
             for app in model.get_test_scenario():
                 self.write_string(sheet, 1, y, app, None)
                 y += 1
 
+    def write_proc_meminfo_detail(self):
+        if not self.proc_meminfo_sheet:
+            self.create_proc_meminfo_sheet()
+
+        categories = self.compute_proc_meminfo_categories()
+        for i in range(len(self.models)):
+            model = self.models[i]
+            sheet = self.proc_meminfo_sheet[i]
+            proc_meminfo = model.get_proc_meminfo_info()
+            # for category in categories:
+            for x in range(len(categories)):
+                category = categories[x]
+                # for app in model.get_test_scenario():
+                for y in range(len(model.get_test_scenario())):
+                    memory = 0 if category not in proc_meminfo.keys() else proc_meminfo[category][y]
+                    self.write_number(sheet, 2 + x, 2 + y, memory, None)
+
     def write_proc_meminfo_sheet(self):
         self.create_proc_meminfo_sheet()
 
         self.write_test_sequence()
         self.write_proc_meminfo_categories()
+        self.write_proc_meminfo_detail()
+
+    def create_dumpsys_meminfo_sheet(self):
+        for model in self.models:
+            self.dumpsys_meminfo_sheet.append(
+                self.workbook.add_worksheet(model.id + "_dumpsys_meminfo"))
+
+    def write_test_sequence_on_dumpsys(self):
+        if not self.dumpsys_meminfo_sheet:
+            self.create_dumpsys_meminfo_sheet()
+
+        for i in range(len(self.models)):
+            model = self.models[i]
+            sheet = self.dumpsys_meminfo_sheet[i]
+            self.set_column(sheet, 1, 1, 25)
+            y = 2
+            for app in model.get_test_scenario():
+                self.write_string(sheet, 1, y, app, None)
+                y += 1
+
+    def write_dumpsys_meminfo_adj(self):
+        if not self.dumpsys_meminfo_sheet:
+            self.create_dumpsys_meminfo_sheet()
+        if not self.adj:
+            self.set_adj_list()
+
+        for sheet in self.dumpsys_meminfo_sheet:
+            x = 2
+            for adj in self.adj:
+                self.set_column(sheet, x, x, 15)
+                self.write_string(sheet, x, 1, adj, None)
+                x += 1
+
+    def write_dumpsys_meminfo_detail(self):
+        if not self.dumpsys_meminfo_sheet:
+            self.create_dumpsys_meminfo_sheet()
+
+        for i in range(len(self.models)):
+            model = self.models[i]
+            sheet = self.dumpsys_meminfo_sheet[i]
+            pss_info = model.get_pss_by_adj()
+
+            for x in range(len(self.adj)):
+                adj = self.adj[x]
+                for y in range(len(model.get_test_scenario())):
+                    pss = 0 if adj not in pss_info.keys() else pss_info[adj][y]
+                    self.write_number(sheet, 2 + x, 2 + y, pss, None)
+
+    def write_dumpsys_meminfo_sheet(self):
+        self.create_dumpsys_meminfo_sheet()
+
+        self.write_test_sequence_on_dumpsys()
+        self.write_dumpsys_meminfo_adj()
+        self.write_dumpsys_meminfo_detail()

@@ -35,5 +35,6 @@ report = rp.Report("reentry_performance_report.xlsx", models)
 
 report.write_summary_sheet()
 report.write_proc_meminfo_sheet()
+report.write_dumpsys_meminfo_sheet()
 
 report.close_report()

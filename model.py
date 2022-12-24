@@ -96,3 +96,9 @@ class Model:
 
     def get_proc_meminfo_categories_sequence(self) -> list:
         return self.proc_meminfo_miner.get_proc_meminfo_categories_sequence()
+
+    def get_proc_meminfo_info(self) -> dict:
+        return self.proc_meminfo_miner.get_proc_meminfo_info()
+
+    def get_pss_by_adj(self) -> dict:
+        return self.dumpsys_meminfo_minder.get_pss_by_adj()
