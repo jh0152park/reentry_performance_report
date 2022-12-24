@@ -153,10 +153,10 @@ class Report:
                 if average_mem is None:
                     if category == "Available Memory":
                         average_mem = model.get_average_by_category(self.memory_agenda_key["Free Memory"]) + \
-                                      model.get_average_by_category(self.memory_agenda_key["Cached Memory"])
+                                        model.get_average_by_category(self.memory_agenda_key["Cached Memory"])
                     elif category == "Swap Used":
                         average_mem = model.get_average_by_category(self.memory_agenda_key["Swap Total"]) - \
-                                      model.get_average_by_category(self.memory_agenda_key["Swap Free"])
+                                        model.get_average_by_category(self.memory_agenda_key["Swap Free"])
                 self.write_number(self.summary_sheet, x, y, average_mem, None)
             x += 1
 
@@ -192,6 +192,24 @@ class Report:
         self.write_simple_adj_list()
         self.write_simple_pss_memory_info()
 
+    def draw_re_entry_performance_graph(self):
+        graph = self.workbook.add_chart({"type": "line"})
+        for i in range(len(self.models)):
+            graph.add_series({
+                "marker": {"type": "diamond"},
+                "name": ["Summary", 0, 2 + (i * 2)],
+                "categories": ["Summary", 2, 1, 1 + len(self.test_scenario), 1],
+                "values": ["Summary", 2, 2 + (i * 2), 1 + len(self.test_scenario), 2 + (i * 2)]
+            })
+        graph.set_style(10)
+        graph.set_legend({"position": "top"})
+        graph.set_title({"name": "Re-Entry Performance"})
+        graph.set_x_axis({"name": "Scenario", "name_font": {"size": 15, "bold": True}})
+        graph.set_y_axis({"name": "Performance", "name_font": {"size": 10, "bold": True}})
+        # graph.set_size({"width": 715, "height": 456})
+        # self.summary_sheet.insert_chart(1, 7, graph)
+        self.summary_sheet.insert_chart(1, 7, graph, {"x_scale": 1.467, "y_scale": 1.25})
+
     def write_summary_sheet(self):
         self.write_sub_title()
         self.write_test_scenario()
@@ -203,6 +221,7 @@ class Report:
         self.write_simple_adj_memory_info()
 
         # have to write down draw graph function
+        self.draw_re_entry_performance_graph()
 
     def create_proc_meminfo_sheet(self):
         for model in self.models:
@@ -251,13 +270,12 @@ class Report:
             model = self.models[i]
             sheet = self.proc_meminfo_sheet[i]
             proc_meminfo = model.get_proc_meminfo_info()
-            # for category in categories:
+
             for x in range(len(categories)):
                 category = categories[x]
-                # for app in model.get_test_scenario():
-                for y in range(len(model.get_test_scenario())):
-                    memory = 0 if category not in proc_meminfo.keys() else proc_meminfo[category][y]
-                    self.write_number(sheet, 2 + x, 2 + y, memory, None)
+                memories = [0 for i in range(len(model.get_test_scenario()))] \
+                    if category not in proc_meminfo.keys() else proc_meminfo[category]
+                sheet.write_column(1, 1 + x, memories)
 
     def write_proc_meminfo_sheet(self):
         self.create_proc_meminfo_sheet()
@@ -297,7 +315,7 @@ class Report:
                 self.write_string(sheet, x, 1, adj, None)
                 x += 1
 
-    def write_dumpsys_meminfo_detail(self):
+    def write_dumpsys_meminfo_detail(self, model=None):
         if not self.dumpsys_meminfo_sheet:
             self.create_dumpsys_meminfo_sheet()
 
@@ -308,9 +326,9 @@ class Report:
 
             for x in range(len(self.adj)):
                 adj = self.adj[x]
-                for y in range(len(model.get_test_scenario())):
-                    pss = 0 if adj not in pss_info.keys() else pss_info[adj][y]
-                    self.write_number(sheet, 2 + x, 2 + y, pss, None)
+                memories = [0 for i in range(len(model.get_test_scenario()))] \
+                    if adj not in pss_info.keys() else pss_info[adj]
+                sheet.write_column(1, 1 + x, memories)
 
     def write_dumpsys_meminfo_sheet(self):
         self.create_dumpsys_meminfo_sheet()

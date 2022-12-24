@@ -30,7 +30,7 @@ class Miner:
                 self.average_launch_time[proc] = \
                     1.00 * sum(self.launch_time[proc][1:]) / (len(self.launch_time[proc]) - 1)
             except BaseException as ex:
-                print("occurred compute error to get average launch time.")
+                print("\noccurred compute error to get average launch time.")
                 print(f"error is {ex}")
                 print("please check detail below")
                 print(f"{proc} / {self.launch_time[proc]}")

@@ -20,7 +20,7 @@ class Miner:
                 self.categories[category].append(int(line.split()[-2]))
 
     def get_average_by_category(self, category) -> float:
-        self.read_all_categories()
+        # self.read_all_categories()
         # print(f"input value is {category} and its include {category in self.categories.keys()}")
         if category not in self.categories.keys():
             return 0

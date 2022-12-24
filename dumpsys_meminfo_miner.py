@@ -95,8 +95,11 @@ class Miner:
                     adj = line.split("K: ")[-1]
                     self.pss_by_adj[adj][-1] = pss
 
+        # for adj in self.pss_by_adj.keys():
+        #     print(f"adj is {adj} and len is {len(self.pss_by_adj[adj])}")
+
     def get_average_pss_by_adj(self, adj: str) -> float:
-        self.compute_pss_size_by_adj()
+        # self.compute_pss_size_by_adj()
         if adj not in self.pss_by_adj.keys():
             return 0.00
         return 1.00 * sum(self.pss_by_adj[adj]) / (len(self.pss_by_adj[adj]) - self.pss_by_adj[adj].count(0))
