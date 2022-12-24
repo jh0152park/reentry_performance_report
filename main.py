@@ -32,5 +32,8 @@ for model in models:
     model.compute_pss_size_by_adj()
 
 report = rp.Report("reentry_performance_report.xlsx", models)
+
 report.write_summary_sheet()
+report.write_proc_meminfo_sheet()
+
 report.close_report()

@@ -81,5 +81,18 @@ class Model:
     def get_re_entry_performance(self) -> dict:
         return self.dumpsys_meminfo_minder.get_re_entry_performance()
 
+    def get_adj_list(self) -> list:
+        return self.dumpsys_meminfo_minder.get_adj_list()
+
     def get_average_launch_time(self) -> dict:
         return self.event_log_miner.get_average_launch_time()
+
+    def get_average_by_category(self, category) -> float:
+        # print(f"return value is {self.proc_meminfo_miner.get_average_by_category(category)}")
+        return self.proc_meminfo_miner.get_average_by_category(category)
+
+    def get_average_pss_by_adj(self, adj):
+        return self.dumpsys_meminfo_minder.get_average_pss_by_adj(adj)
+
+    def get_proc_meminfo_categories_sequence(self) -> list:
+        return self.proc_meminfo_miner.get_proc_meminfo_categories_sequence()
