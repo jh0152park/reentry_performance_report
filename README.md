@@ -5,6 +5,7 @@
 
 # Overview
 We need some way to check refresh performance and average launch speed every each application more easily with our refresh test script.
+
 We can check very simply by just one sheet on result excel file about below things.
 
 1. Test Application
@@ -20,3 +21,7 @@ We can check very simply by just one sheet on result excel file about below thin
 1. Full time "proc/meminfo" log information by our refresh test script
 2. Full time "dumpsys meminfo" log information by our refresh test script
 3. Full time "event" log information by our refresh test script
+------------------------------------------------------------
+
+# Result File
+One simple excel file, also can support multi test result log files by our refresh test script.
