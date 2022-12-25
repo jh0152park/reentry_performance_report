@@ -34,14 +34,36 @@ class Format:
             "text_wrap": True
         })
 
-    @staticmethod
-    def get_bg_color_by_adj(adj):
-        adj = adj.lower()
-        if "foreground" in adj:
-            return COLORS["yellow"]
-        elif "service" in adj:
-            return COLORS["sky_blue"]
-        elif "picked" in adj or "cached" in adj:
-            return COLORS["gray"]
-        else:
-            return COLORS["butter"]
+    def set_format_mb(self, bold: bool, font_size: int, bg_color: str, font_color: str, align: str,
+                    top: int, bottom: int, left: int, right: int):
+        return self.workbook.add_format({
+            "bold": bold,
+            "font_size": font_size,
+            "bg_color": bg_color,
+            "font_color": font_color,
+            "align": align,
+            "valign": "vcenter",
+            "top": top,
+            "bottom": bottom,
+            "left": left,
+            "right": right,
+            "text_wrap": True,
+            "num_format": '#,##0 "MB"'
+        })
+
+    def set_format_kb(self, bold: bool, font_size: int, bg_color: str, font_color: str, align: str,
+                    top: int, bottom: int, left: int, right: int):
+        return self.workbook.add_format({
+            "bold": bold,
+            "font_size": font_size,
+            "bg_color": bg_color,
+            "font_color": font_color,
+            "align": align,
+            "valign": "vcenter",
+            "top": top,
+            "bottom": bottom,
+            "left": left,
+            "right": right,
+            "text_wrap": True,
+            "num_format": '#,##0 "KB"'
+        })

@@ -18,6 +18,7 @@ class Miner:
                     self.categories[category] = []
                     self.categories_sequence.append(category)
                 self.categories[category].append(int(line.split()[-2]))
+        # print(self.categories["MemFree"])
 
     def get_average_by_category(self, category) -> float:
         # self.read_all_categories()
