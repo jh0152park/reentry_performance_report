@@ -5,7 +5,6 @@
 
 # Overview
 We need some way to check refresh performance and average launch speed every each application more easily with our refresh test script.
-
 We can check very simply by just one sheet on result excel file about below things.
 
 1. Test Application
