@@ -26,6 +26,3 @@ We can check very simply by just one sheet on result excel file about below thin
 
 # Result File
 One simple excel file, also can support multi test result log files by our refresh test script.
-
-< test >
-<test>
